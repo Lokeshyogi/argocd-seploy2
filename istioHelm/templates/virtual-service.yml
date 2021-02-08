@@ -2,6 +2,9 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: presto-vs
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   {{- if .Values.virtualService.hosts }}
   {{- with .Values.virtualService.hosts }}
@@ -27,13 +30,15 @@ spec:
               number: 8080
           weight: 50
   source:
-    path: istioHelm
-    repoURL: https://gitlab.com/nwm-team/argocd-rollouts.git
+    repoURL: https://github.com/Lokeshyogi/virtual-service.git
     targetRevision: HEAD
+    path: helm
   destination:
-    namespace: production
     server: https://kubernetes.default.svc
+    namespace: production
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
+    syncOptions:
+    - CreateNamespace=true
