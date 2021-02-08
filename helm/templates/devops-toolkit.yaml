@@ -9,7 +9,7 @@ spec:
   project: production
   source:
     path: helm
-    repoURL: https://github.com/Lokeshyogi/argocd-seploy2
+    repoURL: https://github.com/vfarcic/devops-toolkit.git
     targetRevision: HEAD
     helm:
       values: |
@@ -25,3 +25,4 @@ spec:
     automated:
       selfHeal: true
       prune: true
+
