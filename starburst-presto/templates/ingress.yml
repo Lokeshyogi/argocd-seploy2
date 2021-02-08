@@ -1,28 +1,32 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
+apiVersion: v1 
+kind: Service 
 metadata:
-  name: devops-toolkit
-  namespace: argocd-ns
+  name: presto-ingress
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  {{- if .Values.ingress.annotations }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
 spec:
-  project: production
+  type: {{.Values.ingress.type}}
+  ports:
+    - port: {{.Values.ingress.port}}
+  selector:
+    role: coordinator
   source:
-    path: starburst-presto
-    repoURL: https://github.com/vfarcic/devops-toolkit.git
+    repoURL: https://github.com/Lokeshyogi/ingress.git
     targetRevision: HEAD
-    helm:
-      values: |
-        image:
-          tag: latest
-        ingress:
-          host: devopstoolkitseries.com
-      version: v3
+    path: helm
   destination:
-    namespace: production
     server: https://kubernetes.default.svc
+    namespace: production
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
-
+    syncOptions:
+    - CreateNamespace=true
