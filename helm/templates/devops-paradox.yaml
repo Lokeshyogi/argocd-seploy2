@@ -2,14 +2,14 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: devops-paradox
-  namespace: argocd-ns
+  namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: production
   source:
     path: helm
-    repoURL: https://github.com/Lokeshyogi/argocd-seploy2
+    repoURL: https://github.com/vfarcic/devops-paradox.git
     targetRevision: HEAD
     helm:
       values: |
