@@ -2,6 +2,9 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: presto-gateway
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   selector:
     istio: ingressgateway # use istio default controller
@@ -16,17 +19,20 @@ spec:
     {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- end }}
+  project: default
   source:
-    path: istioHelm
-    repoURL: https://gitlab.com/nwm-team/argocd-rollouts.git
+    repoURL: https://github.com/Lokeshyogi/gateway.git
     targetRevision: HEAD
+    path: helm
   destination:
-    namespace: production
     server: https://kubernetes.default.svc
+    namespace: production
   syncPolicy:
     automated:
       selfHeal: true
       prune: true
+    syncOptions:
+    - CreateNamespace=true
 
 
 
